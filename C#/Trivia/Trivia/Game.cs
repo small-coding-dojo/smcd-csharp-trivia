@@ -8,69 +8,77 @@ namespace Trivia
     {
         private readonly List<string> _players = new List<string>();
 
-        private readonly int[] _places = new int[6];
-        private readonly int[] _purses = new int[6];
+        // TODO smell: player properties are distributed into separate arrays with fixed length
+        private readonly int[] _places = new int[6]; // TODO smell: Magic number 6 and mysterious name
+        private readonly int[] _purses = new int[6]; // TODO smell: Magic number 6 and mysterious name
 
-        private readonly bool[] _inPenaltyBox = new bool[6];
+        private readonly bool[] _inPenaltyBox = new bool[6]; // TODO smell: Magic number 6 and mysterious name
 
         private readonly LinkedList<string> _popQuestions = new LinkedList<string>();
         private readonly LinkedList<string> _scienceQuestions = new LinkedList<string>();
         private readonly LinkedList<string> _sportsQuestions = new LinkedList<string>();
         private readonly LinkedList<string> _rockQuestions = new LinkedList<string>();
 
-        private int _currentPlayer;
+        private int _currentPlayer; // TODO smell: Single responsibility is violated - current player and questions are in one clas
         private bool _isGettingOutOfPenaltyBox;
 
         public Game()
         {
-            for (var i = 0; i < 50; i++)
+            for (var i = 0; i < 50; i++) // TODO smell: Magic number 50
             {
                 _popQuestions.AddLast("Pop Question " + i);
                 _scienceQuestions.AddLast(("Science Question " + i));
                 _sportsQuestions.AddLast(("Sports Question " + i));
-                _rockQuestions.AddLast(CreateRockQuestion(i));
+                _rockQuestions.AddLast(CreateRockQuestion(i)); // TODO smell: inconsistent level of abstraction
             }
         }
 
-        public string CreateRockQuestion(int index)
+        public string CreateRockQuestion(int index) // TODO smell: hide implementation details
         {
             return "Rock Question " + index;
         }
 
+        // TODO smell: Unused method IsPlayable
         public bool IsPlayable()
         {
             return (HowManyPlayers() >= 2);
         }
 
-        public bool Add(string playerName)
+        public bool Add(string playerName) // TODO smell: unused return value; method throws exception if too many players
         {
             _players.Add(playerName);
             _places[HowManyPlayers()] = 0;
             _purses[HowManyPlayers()] = 0;
             _inPenaltyBox[HowManyPlayers()] = false;
 
+            // TODO smell: output is coupled to static ressources (Console)
             Console.WriteLine(playerName + " was added");
             Console.WriteLine("They are player number " + _players.Count);
+            
+            // TODO smell: function always returns true
             return true;
         }
 
-        public int HowManyPlayers()
+        public int HowManyPlayers() // TODO smell: hide implementation details
         {
             return _players.Count;
         }
 
-        public void Roll(int roll)
+        public void Roll(int roll) // TODO smell: long method; complex method
         {
             Console.WriteLine(_players[_currentPlayer] + " is the current player");
             Console.WriteLine("They have rolled a " + roll);
 
             if (_inPenaltyBox[_currentPlayer])
             {
+                // TODO smell: different levels of abstraction - penalty box handling, moving the player, asking questions
+                // TODO smell: SRP violated - penalty box handling, moving the player, asking questions
                 if (roll % 2 != 0)
                 {
-                    _isGettingOutOfPenaltyBox = true;
+                    _isGettingOutOfPenaltyBox = true; // TODO smell: penaltyBox state handling implemented as class member; name is mysterious OR bug - player does not get out of penalty box, they just may provide an answer
 
                     Console.WriteLine(_players[_currentPlayer] + " is getting out of the penalty box");
+                    // TODO smell: duplicate code (new location of player, ask question)
                     _places[_currentPlayer] = _places[_currentPlayer] + roll;
                     if (_places[_currentPlayer] > 11) _places[_currentPlayer] = _places[_currentPlayer] - 12;
 
@@ -88,6 +96,7 @@ namespace Trivia
             }
             else
             {
+                // TODO smell: duplicate code (new location of player, ask question)
                 _places[_currentPlayer] = _places[_currentPlayer] + roll;
                 if (_places[_currentPlayer] > 11) _places[_currentPlayer] = _places[_currentPlayer] - 12;
 
@@ -101,8 +110,12 @@ namespace Trivia
 
         private void AskQuestion()
         {
+            // TODO smell: redundant code structure
+            // TODO smell: fixed number of categories; category names are hard coded; categories cannot be extended easily
             if (CurrentCategory() == "Pop")
             {
+                // TODO smell: linked list is enumerated without necessity (use property First instead)
+                // TODO smell: List of questions can be empty - missing error handling
                 Console.WriteLine(_popQuestions.First());
                 _popQuestions.RemoveFirst();
             }
@@ -125,6 +138,7 @@ namespace Trivia
 
         private string CurrentCategory()
         {
+            // TODO smell: magic numbers; magic strings
             if (_places[_currentPlayer] == 0) return "Pop";
             if (_places[_currentPlayer] == 4) return "Pop";
             if (_places[_currentPlayer] == 8) return "Pop";
