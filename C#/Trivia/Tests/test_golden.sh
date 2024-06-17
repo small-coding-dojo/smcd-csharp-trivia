@@ -2,7 +2,9 @@
 
 dotnet run --project ../Trivia 0 > actual.txt
 
-diff golden.txt actual.txt
+# todo: use git line ending conversion instead 
+# https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings 
+diff --ignore-all-space golden.txt actual.txt
 STATUS=$?
 if [ $STATUS -ne 0 ]; then
     echo "error"
