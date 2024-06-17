@@ -14,7 +14,7 @@ namespace Trivia
             aGame.Add("Pat");
             aGame.Add("Sue");
 
-            var rand = new Random();
+            var rand = InitializeRandom(args);
 
             do
             {
@@ -29,6 +29,22 @@ namespace Trivia
                     _notAWinner = aGame.WasCorrectlyAnswered();
                 }
             } while (_notAWinner);
+        }
+
+        private static Random InitializeRandom(string[] args)
+        {
+            Random rand;
+            if (args.Length > 0)
+            {
+                var seed = int.Parse(args[0]);
+                rand = new Random(seed);
+            }
+            else
+            {
+                rand = new Random();
+            }
+
+            return rand;
         }
     }
 }
