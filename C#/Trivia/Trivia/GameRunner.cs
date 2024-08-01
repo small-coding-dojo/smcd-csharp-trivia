@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace Trivia
 {
@@ -8,7 +9,18 @@ namespace Trivia
 
         public static void Main(string[] args)
         {
-            var aGame = new Game();
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddSimpleConsole(options =>
+                {
+                   // options.IncludeScopes = false;
+                   
+                   options.SingleLine = true;
+//                    options.TimestampFormat = "HH:mm:ss ";
+                });
+            });
+            
+            var aGame = new Game(loggerFactory.CreateLogger<Game>());
 
             aGame.Add("Chet");
             aGame.Add("Pat");

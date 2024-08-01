@@ -77,7 +77,7 @@ namespace Trivia
             // todo: replace console writeline with ILogger, this is covered by test_golden.sh
             // Goal 1 introduce logging framework
             // Goal 2 replace first console writeline with equivalent logging
-            _logger.LogInformation(_players[_currentPlayer] + " is the current player");
+            _logger.LogInformation("Hallo Welt");
             Console.WriteLine(_players[_currentPlayer] + " is the current player");
             Console.WriteLine("They have rolled a " + roll);
 
