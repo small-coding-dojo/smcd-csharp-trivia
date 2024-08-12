@@ -7,14 +7,17 @@ namespace Tests;
 public class GameTests
 {
     [Fact]
-    public void SomeTest()
+    public void Given_Fresh_Player_When_Rolling_Die_Then_Roll_Is_Added_To_Location()
     {
-        var writer = Substitute.For<IWriter>();
+        const string testPlayerName = "TestPlayer 1";
         
+        var writer = Substitute.For<IWriter>();
         var game = new Game(writer);
-        game.Add("TestPlayer 1");
+        game.Add(testPlayerName);
         game.Roll(1);
         
-        writer.Received().WriteLine("TestPlayer 1 is the current player");
+        writer.Received().WriteLine($"{testPlayerName}'s new location is 1");
     }
+    
+    
 }
