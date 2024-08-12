@@ -23,9 +23,13 @@ namespace Trivia
         private bool _isGettingOutOfPenaltyBox;
         private readonly IWriter _consoleWriter;
 
-        public Game()
+        public Game() : this(new ConsoleWriter())
         {
-            _consoleWriter = new ConsoleWriter();
+        }
+
+        private Game(IWriter writer)
+        {
+            _consoleWriter = writer;
             for (var i = 0; i < 50; i++) // TODO smell: Magic number 50
             {
                 _popQuestions.AddLast("Pop Question " + i);
