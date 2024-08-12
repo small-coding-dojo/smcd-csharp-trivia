@@ -21,9 +21,11 @@ namespace Trivia
 
         private int _currentPlayer; // TODO smell: Single responsibility is violated - current player and questions are in one clas
         private bool _isGettingOutOfPenaltyBox;
+        private readonly IWriter _consoleWriter;
 
         public Game()
         {
+            _consoleWriter = new ConsoleWriter();
             for (var i = 0; i < 50; i++) // TODO smell: Magic number 50
             {
                 _popQuestions.AddLast("Pop Question " + i);
@@ -52,8 +54,8 @@ namespace Trivia
             _inPenaltyBox[HowManyPlayers()] = false;
 
             // TODO smell: output is coupled to static ressources (Console)
-            Console.WriteLine(playerName + " was added");
-            Console.WriteLine("They are player number " + _players.Count);
+            _consoleWriter.WriteLine(playerName + " was added");
+            _consoleWriter.WriteLine("They are player number " + _players.Count);
             
             // TODO smell: function always returns true
             return true;
@@ -66,8 +68,8 @@ namespace Trivia
 
         public void Roll(int roll) // TODO smell: long method; complex method
         {
-            Console.WriteLine(_players[_currentPlayer] + " is the current player");
-            Console.WriteLine("They have rolled a " + roll);
+            _consoleWriter.WriteLine(_players[_currentPlayer] + " is the current player");
+            _consoleWriter.WriteLine("They have rolled a " + roll);
 
             if (_inPenaltyBox[_currentPlayer])
             {
@@ -77,20 +79,20 @@ namespace Trivia
                 {
                     _isGettingOutOfPenaltyBox = true; // TODO smell: penaltyBox state handling implemented as class member; name is mysterious OR bug - player does not get out of penalty box, they just may provide an answer
 
-                    Console.WriteLine(_players[_currentPlayer] + " is getting out of the penalty box");
+                    _consoleWriter.WriteLine(_players[_currentPlayer] + " is getting out of the penalty box");
                     // TODO smell: duplicate code (new location of player, ask question)
                     _places[_currentPlayer] = _places[_currentPlayer] + roll;
                     if (_places[_currentPlayer] > 11) _places[_currentPlayer] = _places[_currentPlayer] - 12;
 
-                    Console.WriteLine(_players[_currentPlayer]
+                    _consoleWriter.WriteLine(_players[_currentPlayer]
                             + "'s new location is "
                             + _places[_currentPlayer]);
-                    Console.WriteLine("The category is " + CurrentCategory());
+                    _consoleWriter.WriteLine("The category is " + CurrentCategory());
                     AskQuestion();
                 }
                 else
                 {
-                    Console.WriteLine(_players[_currentPlayer] + " is not getting out of the penalty box");
+                    _consoleWriter.WriteLine(_players[_currentPlayer] + " is not getting out of the penalty box");
                     _isGettingOutOfPenaltyBox = false;
                 }
             }
@@ -100,10 +102,10 @@ namespace Trivia
                 _places[_currentPlayer] = _places[_currentPlayer] + roll;
                 if (_places[_currentPlayer] > 11) _places[_currentPlayer] = _places[_currentPlayer] - 12;
 
-                Console.WriteLine(_players[_currentPlayer]
+                _consoleWriter.WriteLine(_players[_currentPlayer]
                         + "'s new location is "
                         + _places[_currentPlayer]);
-                Console.WriteLine("The category is " + CurrentCategory());
+                _consoleWriter.WriteLine("The category is " + CurrentCategory());
                 AskQuestion();
             }
         }
@@ -116,22 +118,22 @@ namespace Trivia
             {
                 // TODO smell: linked list is enumerated without necessity (use property First instead)
                 // TODO smell: List of questions can be empty - missing error handling
-                Console.WriteLine(_popQuestions.First());
+                _consoleWriter.WriteLine(_popQuestions.First());
                 _popQuestions.RemoveFirst();
             }
             if (CurrentCategory() == "Science")
             {
-                Console.WriteLine(_scienceQuestions.First());
+                _consoleWriter.WriteLine(_scienceQuestions.First());
                 _scienceQuestions.RemoveFirst();
             }
             if (CurrentCategory() == "Sports")
             {
-                Console.WriteLine(_sportsQuestions.First());
+                _consoleWriter.WriteLine(_sportsQuestions.First());
                 _sportsQuestions.RemoveFirst();
             }
             if (CurrentCategory() == "Rock")
             {
-                Console.WriteLine(_rockQuestions.First());
+                _consoleWriter.WriteLine(_rockQuestions.First());
                 _rockQuestions.RemoveFirst();
             }
         }
@@ -157,9 +159,9 @@ namespace Trivia
             {
                 if (_isGettingOutOfPenaltyBox)
                 {
-                    Console.WriteLine("Answer was correct!!!!");
+                    _consoleWriter.WriteLine("Answer was correct!!!!");
                     _purses[_currentPlayer]++;
-                    Console.WriteLine(_players[_currentPlayer]
+                    _consoleWriter.WriteLine(_players[_currentPlayer]
                             + " now has "
                             + _purses[_currentPlayer]
                             + " Gold Coins.");
@@ -179,9 +181,9 @@ namespace Trivia
             }
             else
             {
-                Console.WriteLine("Answer was corrent!!!!");
+                _consoleWriter.WriteLine("Answer was corrent!!!!");
                 _purses[_currentPlayer]++;
-                Console.WriteLine(_players[_currentPlayer]
+                _consoleWriter.WriteLine(_players[_currentPlayer]
                         + " now has "
                         + _purses[_currentPlayer]
                         + " Gold Coins.");
@@ -196,8 +198,8 @@ namespace Trivia
 
         public bool WrongAnswer()
         {
-            Console.WriteLine("Question was incorrectly answered");
-            Console.WriteLine(_players[_currentPlayer] + " was sent to the penalty box");
+            _consoleWriter.WriteLine("Question was incorrectly answered");
+            _consoleWriter.WriteLine(_players[_currentPlayer] + " was sent to the penalty box");
             _inPenaltyBox[_currentPlayer] = true;
 
             _currentPlayer++;
