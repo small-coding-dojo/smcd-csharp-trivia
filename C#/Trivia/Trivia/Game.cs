@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Trivia
 {
     public class Game
     {
-        private readonly ILogger<Game> _logger;
         private readonly List<string> _players = new List<string>();
 
         // TODO smell: player properties are distributed into separate arrays with fixed length
@@ -25,9 +22,8 @@ namespace Trivia
         private int _currentPlayer; // TODO smell: Single responsibility is violated - current player and questions are in one clas
         private bool _isGettingOutOfPenaltyBox;
 
-        public Game(ILogger<Game> logger)
+        public Game()
         {
-            _logger = logger;
             for (var i = 0; i < 50; i++) // TODO smell: Magic number 50
             {
                 _popQuestions.AddLast("Pop Question " + i);
@@ -35,10 +31,6 @@ namespace Trivia
                 _sportsQuestions.AddLast(("Sports Question " + i));
                 _rockQuestions.AddLast(CreateRockQuestion(i)); // TODO smell: inconsistent level of abstraction
             }
-        }
-
-        public Game() : this(new NullLogger<Game>())
-        {
         }
 
         public string CreateRockQuestion(int index) // TODO smell: hide implementation details
@@ -74,10 +66,6 @@ namespace Trivia
 
         public void Roll(int roll) // TODO smell: long method; complex method
         {
-            // todo: replace console writeline with ILogger, this is covered by test_golden.sh
-            // Goal 1 introduce logging framework
-            // Goal 2 replace first console writeline with equivalent logging
-            _logger.LogInformation(_players[_currentPlayer] + " is the current player");
             Console.WriteLine(_players[_currentPlayer] + " is the current player");
             Console.WriteLine("They have rolled a " + roll);
 
